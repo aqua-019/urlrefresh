@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>URL Auto-Refresher</title>
+<meta name="description" content="Silently auto-refresh up to 15 URLs on a configurable timer.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔄</text></svg>">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0a0c;
+    --surface: #131318;
+    --border: #1e1e26;
+    --text: #e0e0e6;
+    --dim: #6b6b7b;
+    --accent: #4a6cf7;
+    --accent-dim: #4a6cf720;
+    --green: #34d399;
+    --red: #f87171;
+    --yellow: #fbbf24;
+  }
+
+  body {
+    font-family: 'IBM Plex Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px;
+  }
+
+  header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+  }
+
+  header h1 {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+
+  header span {
+    font-size: 11px;
+    color: var(--dim);
+  }
+
+  .controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    align-items: stretch;
+  }
+
+  .controls input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 14px;
+    font-family: inherit;
+    font-size: 13px;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .controls input:focus {
+    border-color: var(--accent);
+  }
+
+  .controls input::placeholder {
+    color: var(--dim);
+  }
+
+  button {
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--surface);
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  button:hover { border-color: var(--accent); background: var(--accent-dim); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button.primary:hover { opacity: 0.85; }
+  button.danger { border-color: var(--red); color: var(--red); background: transparent; }
+  button.danger:hover { background: #f8717115; }
+
+  .toolbar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .toolbar .status {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--dim);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .toolbar .status .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s ease infinite;
+  }
+
+  .toolbar .status.paused .dot {
+    background: var(--yellow);
+    animation: none;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .url-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .url-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    transition: border-color 0.15s;
+  }
+
+  .url-item:hover { border-color: #2a2a36; }
+
+  .url-item .index {
+    font-size: 11px;
+    color: var(--dim);
+    min-width: 20px;
+  }
+
+  .url-item .url-text {
+    flex: 1;
+    font-size: 13px;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .url-item .countdown {
+    font-size: 11px;
+    color: var(--accent);
+    min-width: 32px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .url-item .last-refresh {
+    font-size: 11px;
+    color: var(--dim);
+    min-width: 70px;
+    text-align: right;
+  }
+
+  .url-item button {
+    padding: 4px 10px;
+    font-size: 11px;
+    border: none;
+    background: transparent;
+    color: var(--dim);
+  }
+
+  .url-item button:hover {
+    color: var(--red);
+    background: transparent;
+  }
+
+  .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--dim);
+    font-size: 12px;
+    line-height: 2;
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+  }
+
+  .interval-input {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--dim);
+  }
+
+  .interval-input input {
+    width: 48px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 8px;
+    font-family: inherit;
+    font-size: 12px;
+    border-radius: 4px;
+    outline: none;
+    text-align: center;
+  }
+
+  .interval-input input:focus { border-color: var(--accent); }
+
+  .hidden-frames { display: none; }
+
+  .flash { animation: flash-green 0.4s ease; }
+  @keyframes flash-green {
+    0% { background: #34d39920; }
+    100% { background: var(--surface); }
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 16px; }
+    .url-item { gap: 8px; padding: 8px 10px; }
+    .url-item .last-refresh { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Auto-Refresher</h1>
+  <span>silent background fetch — up to 15 URLs</span>
+</header>
+
+<div class="controls">
+  <input type="text" id="urlInput" placeholder="https://example.com" />
+  <button class="primary" onclick="addUrl()">Add</button>
+</div>
+
+<div class="toolbar">
+  <button onclick="togglePause()" id="pauseBtn">Pause All</button>
+  <button class="danger" onclick="clearAll()">Clear All</button>
+  <div class="interval-input">
+    <span>interval</span>
+    <input type="number" id="intervalInput" value="15" min="1" max="300" onchange="updateInterval()" />
+    <span>sec</span>
+  </div>
+  <div class="status" id="statusIndicator">
+    <div class="dot"></div>
+    <span id="statusText">running</span>
+  </div>
+</div>
+
+<div class="url-list" id="urlList"></div>
+<div class="empty" id="emptyState">
+  No URLs added yet.<br>
+  Paste a URL above and hit Add or press Enter.<br>
+  Each URL will be fetched silently every 15s.
+</div>
+
+<div class="hidden-frames" id="frameContainer"></div>
+
+<script>
+  let urls = [];
+  let paused = false;
+  let interval = 15;
+  let timers = {};
+  let countdowns = {};
+
+  const urlInput = document.getElementById('urlInput');
+  const urlList = document.getElementById('urlList');
+  const emptyState = document.getElementById('emptyState');
+  const frameContainer = document.getElementById('frameContainer');
+  const pauseBtn = document.getElementById('pauseBtn');
+  const statusIndicator = document.getElementById('statusIndicator');
+  const statusText = document.getElementById('statusText');
+
+  urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') addUrl(); });
+
+  function normalizeUrl(url) {
+    url = url.trim();
+    if (!url) return '';
+    if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+    return url;
+  }
+
+  function addUrl() {
+    const url = normalizeUrl(urlInput.value);
+    if (!url) return;
+    if (urls.length >= 15) return alert('Max 15 URLs');
+    if (urls.includes(url)) return alert('URL already added');
+
+    urls.push(url);
+    urlInput.value = '';
+    render();
+    startTimer(url);
+    refreshUrl(url);
+  }
+
+  function removeUrl(index) {
+    const url = urls[index];
+    clearInterval(timers[url]);
+    clearInterval(countdowns[url]);
+    delete timers[url];
+    delete countdowns[url];
+    urls.splice(index, 1);
+
+    const frame = document.getElementById('frame-' + hashUrl(url));
+    if (frame) frame.remove();
+
+    render();
+  }
+
+  function clearAll() {
+    urls.forEach(url => {
+      clearInterval(timers[url]);
+      clearInterval(countdowns[url]);
+    });
+    timers = {};
+    countdowns = {};
+    urls = [];
+    frameContainer.innerHTML = '';
+    render();
+  }
+
+  function togglePause() {
+    paused = !paused;
+    pauseBtn.textContent = paused ? 'Resume All' : 'Pause All';
+    statusText.textContent = paused ? 'paused' : 'running';
+    statusIndicator.className = paused ? 'status paused' : 'status';
+
+    if (paused) {
+      urls.forEach(url => {
+        clearInterval(timers[url]);
+        clearInterval(countdowns[url]);
+      });
+    } else {
+      urls.forEach(url => {
+        startTimer(url);
+        refreshUrl(url);
+      });
+    }
+  }
+
+  function updateInterval() {
+    const val = parseInt(document.getElementById('intervalInput').value);
+    if (val >= 1 && val <= 300) {
+      interval = val;
+      if (!paused) {
+        urls.forEach(url => {
+          clearInterval(timers[url]);
+          clearInterval(countdowns[url]);
+          startTimer(url);
+        });
+      }
+    }
+  }
+
+  function hashUrl(url) {
+    let h = 0;
+    for (let i = 0; i < url.length; i++) {
+      h = ((h << 5) - h + url.charCodeAt(i)) | 0;
+    }
+    return Math.abs(h);
+  }
+
+  function refreshUrl(url) {
+    const id = 'frame-' + hashUrl(url);
+    let frame = document.getElementById(id);
+    if (frame) frame.remove();
+
+    frame = document.createElement('iframe');
+    frame.id = id;
+    frame.src = url;
+    frame.style.display = 'none';
+    frameContainer.appendChild(frame);
+
+    const idx = urls.indexOf(url);
+    if (idx > -1) {
+      const item = document.querySelector(`[data-index="${idx}"]`);
+      if (item) {
+        const ts = item.querySelector('.last-refresh');
+        if (ts) {
+          const now = new Date();
+          ts.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+        item.classList.remove('flash');
+        void item.offsetWidth;
+        item.classList.add('flash');
+      }
+    }
+  }
+
+  function startTimer(url) {
+    let remaining = interval;
+    const idx = urls.indexOf(url);
+    updateCountdownDisplay(idx, remaining);
+
+    countdowns[url] = setInterval(() => {
+      remaining--;
+      if (remaining < 0) remaining = interval;
+      updateCountdownDisplay(urls.indexOf(url), remaining);
+    }, 1000);
+
+    timers[url] = setInterval(() => {
+      refreshUrl(url);
+      remaining = interval;
+    }, interval * 1000);
+  }
+
+  function updateCountdownDisplay(idx, sec) {
+    if (idx < 0) return;
+    const item = document.querySelector(`[data-index="${idx}"]`);
+    if (item) {
+      const cd = item.querySelector('.countdown');
+      if (cd) cd.textContent = sec + 's';
+    }
+  }
+
+  function render() {
+    emptyState.style.display = urls.length ? 'none' : 'block';
+
+    urlList.innerHTML = urls.map((url, i) => `
+      <div class="url-item" data-index="${i}">
+        <span class="index">${String(i + 1).padStart(2, '0')}</span>
+        <span class="url-text" title="${url}">${url}</span>
+        <span class="countdown">—</span>
+        <span class="last-refresh">—</span>
+        <button onclick="removeUrl(${i})">✕</button>
+      </div>
+    `).join('');
+  }
+</script>
+</body>
+</html>
