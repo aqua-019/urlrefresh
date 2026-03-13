@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matty-San, tik-tok god</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Bangers&family=Permanent+Marker&family=Press+Start+2P&family=Rubik+Mono+One&family=Silkscreen&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #000000;
+    --surface: #0a0a0a;
+    --border: #1a1a1a;
+    --border-hover: #2a2a2a;
+    --text: #d4d4de;
+    --dim: #55556a;
+    --accent: #5b7ff7;
+    --accent-dim: #5b7ff715;
+    --green: #22c55e;
+    --green-dim: #22c55e20;
+    --red: #ef4444;
+    --red-dim: #ef444415;
+    --yellow: #eab308;
+    --pink: #f472b6;
+    --slider-track: #1a1a1a;
+  }
+
+  body {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* ====== SJB83 CHAOS LAYER ====== */
+  .sjb-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    overflow: hidden;
+  }
+
+  .sjb {
+    position: absolute;
+    user-select: none;
+    white-space: nowrap;
+    animation: sjb-drift 20s linear infinite;
+  }
+
+  @keyframes sjb-drift {
+    0% { transform: translateY(0) rotate(var(--r)); }
+    100% { transform: translateY(-30px) rotate(var(--r)); }
+  }
+
+  /* ====== ANIME GIRLS ====== */
+  .anime-girls-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
+  }
+
+  .anime-girl {
+    position: absolute;
+    pointer-events: none;
+  }
+
+  /* ====== POPUP ====== */
+  .popup-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+
+  .popup-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .popup-box {
+    background: #0a0a0a;
+    border: 2px solid var(--pink);
+    border-radius: 8px;
+    padding: 32px 40px;
+    text-align: center;
+    max-width: 380px;
+    transform: scale(0.8);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 0 60px rgba(244, 114, 182, 0.2);
+  }
+
+  .popup-overlay.show .popup-box { transform: scale(1); }
+
+  .popup-box .popup-emoji {
+    font-size: 48px;
+    margin-bottom: 12px;
+    animation: popup-bounce 0.6s ease infinite alternate;
+  }
+
+  @keyframes popup-bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-8px); }
+  }
+
+  .popup-box .popup-text {
+    font-family: 'Bangers', cursive;
+    font-size: 28px;
+    color: var(--pink);
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+  }
+
+  .popup-box .popup-sub {
+    font-size: 11px;
+    color: var(--dim);
+    margin-bottom: 18px;
+  }
+
+  .popup-box .popup-close {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    background: var(--pink);
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    padding: 8px 24px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .popup-box .popup-close:hover { opacity: 0.8; }
+
+  /* ====== MAIN ====== */
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 20px 16px;
+    position: relative;
+    z-index: 10;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+
+  .header-left h1 {
+    font-family: 'Bangers', cursive;
+    font-size: 26px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    color: var(--pink);
+    line-height: 1;
+    text-shadow: 0 0 30px rgba(244, 114, 182, 0.3);
+  }
+
+  .header-left h1 .god { color: var(--accent); }
+
+  .header-left .sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    margin-top: 4px;
+    font-weight: 300;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    color: var(--dim);
+  }
+
+  .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: blink 2s ease infinite;
+  }
+
+  .dot.off { background: var(--yellow); animation: none; }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+
+  .input-bar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .input-bar input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 9px 12px;
+    font-family: inherit;
+    font-size: 12px;
+    border-radius: 3px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .input-bar input:focus { border-color: var(--accent); }
+  .input-bar input::placeholder { color: var(--dim); }
+
+  .btn {
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 7px 14px;
+    cursor: pointer;
+    transition: all 0.12s;
+    background: var(--surface);
+    color: var(--text);
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  .btn:hover { border-color: var(--accent); background: var(--accent-dim); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.primary:hover { opacity: 0.85; }
+  .btn.danger { color: var(--red); border-color: transparent; background: transparent; }
+  .btn.danger:hover { background: var(--red-dim); }
+  .btn.sm { padding: 4px 10px; font-size: 10px; }
+
+  .toolbar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .toolbar .count {
+    margin-left: auto;
+    font-size: 10px;
+    color: var(--dim);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bulk-toggle {
+    font-size: 10px;
+    color: var(--dim);
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-family: inherit;
+    padding: 4px 0;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .bulk-toggle:hover { color: var(--text); }
+
+  .bulk-area { display: none; margin-bottom: 12px; }
+  .bulk-area.open { display: block; }
+
+  .bulk-area textarea {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 11px;
+    border-radius: 3px;
+    outline: none;
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.6;
+  }
+
+  .bulk-area textarea:focus { border-color: var(--accent); }
+  .bulk-area textarea::placeholder { color: var(--dim); }
+  .bulk-area .bulk-actions { display: flex; gap: 6px; margin-top: 6px; }
+
+  .url-list { display: flex; flex-direction: column; gap: 1px; }
+
+  .url-item {
+    display: grid;
+    grid-template-columns: 28px 1fr 100px 42px 62px 28px;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: var(--surface);
+    border-radius: 2px;
+    border: 1px solid transparent;
+    transition: border-color 0.12s;
+    min-height: 38px;
+  }
+
+  .url-item:hover { border-color: var(--border); }
+  .url-item .idx { font-size: 10px; color: var(--dim); text-align: center; font-variant-numeric: tabular-nums; }
+  .url-item .url-text { font-size: 11px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+
+  .slider-wrap { display: flex; align-items: center; gap: 4px; }
+
+  .slider-wrap input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 60px;
+    height: 3px;
+    background: var(--slider-track);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .slider-wrap input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+
+  .slider-wrap input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.3); }
+
+  .slider-wrap input[type="range"]::-moz-range-thumb {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: none;
+    cursor: pointer;
+  }
+
+  .slider-wrap .rate-label { font-size: 9px; color: var(--dim); min-width: 30px; text-align: right; font-variant-numeric: tabular-nums; }
+
+  .url-item .cd { font-size: 10px; color: var(--accent); text-align: right; font-variant-numeric: tabular-nums; }
+  .url-item .ts { font-size: 9px; color: var(--dim); text-align: right; font-variant-numeric: tabular-nums; }
+
+  .url-item .remove-btn {
+    font-size: 10px; color: var(--dim); cursor: pointer; border: none; background: none;
+    font-family: inherit; padding: 2px; text-align: center; border-radius: 2px; transition: all 0.1s;
+  }
+
+  .url-item .remove-btn:hover { color: var(--red); background: var(--red-dim); }
+
+  .url-item.flash { animation: row-flash 0.3s ease; }
+  @keyframes row-flash { 0% { background: var(--green-dim); } 100% { background: var(--surface); } }
+
+  .empty {
+    text-align: center; padding: 48px 16px; color: var(--dim);
+    font-size: 11px; line-height: 2; border: 1px dashed var(--border); border-radius: 3px;
+  }
+
+  .frame-pool { display: none; }
+
+  /* ====== DISCLAIMER FOOTER ====== */
+  .disclaimer {
+    position: relative;
+    z-index: 10;
+    max-width: 960px;
+    margin: 40px auto 20px;
+    padding: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 10px;
+    color: #444;
+    line-height: 1.8;
+  }
+
+  .disclaimer strong { color: #666; }
+  .disclaimer a { color: var(--dim); }
+
+  @media (max-width: 680px) {
+    .url-item { grid-template-columns: 24px 1fr 42px 28px; gap: 6px; }
+    .url-item .slider-wrap, .url-item .ts { display: none; }
+    .container { padding: 14px 10px; }
+    .header-left h1 { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SJB83 CHAOS OVERLAY -->
+<div class="sjb-layer" id="sjbLayer"></div>
+
+<!-- ANIME GIRLS LAYER -->
+<div class="anime-girls-layer" id="animeLayer"></div>
+
+<!-- POPUP -->
+<div class="popup-overlay" id="popup">
+  <div class="popup-box">
+    <div class="popup-emoji">🫡</div>
+    <div class="popup-text">Daddy needs VIEWS</div>
+    <div class="popup-sub">URL locked and loaded. let's get this bread.</div>
+    <button class="popup-close" onclick="closePopup()">yessir</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="container">
+  <header>
+    <div class="header-left">
+      <h1>Matty-San, tik-tok <span class="god">god</span></h1>
+      <div class="sub">auto-refresh engine — up to 100 URLs — 0.1s to 15s per slot</div>
+    </div>
+    <div class="header-right">
+      <div class="dot" id="globalDot"></div>
+      <span id="globalStatus">running</span>
+    </div>
+  </header>
+
+  <div class="input-bar">
+    <input type="text" id="urlInput" placeholder="https://..." />
+    <button class="btn primary" onclick="addUrl()">Add</button>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn" onclick="togglePause()" id="pauseBtn">Pause All</button>
+    <button class="btn danger" onclick="clearAll()">Clear All</button>
+    <button class="bulk-toggle" onclick="toggleBulk()">bulk import</button>
+    <span class="count" id="countLabel">0 / 100</span>
+  </div>
+
+  <div class="bulk-area" id="bulkArea">
+    <textarea id="bulkInput" placeholder="Paste URLs — one per line (max 100 total)"></textarea>
+    <div class="bulk-actions">
+      <button class="btn sm primary" onclick="bulkAdd()">Import</button>
+      <button class="btn sm" onclick="toggleBulk()">Cancel</button>
+    </div>
+  </div>
+
+  <div class="url-list" id="urlList"></div>
+  <div class="empty" id="emptyState">No URLs yet. Add one above or use bulk import.</div>
+</div>
+
+<!-- DISCLAIMER FOOTER -->
+<div class="disclaimer">
+  <strong>⚖️ Legal Disclaimer & Terms of Use 📜</strong><br><br>
+  🌐 This tool is a <strong>general-purpose URL refresher</strong> designed for <strong>development testing</strong>, QA workflows, endpoint monitoring, and personal browsing convenience. It functions by periodically loading user-specified URLs in the background — the functional equivalent of a user manually pressing the refresh button in their browser at their own preferred interval. 🔄<br><br>
+  ✅ This utility performs <strong>standard HTTP requests</strong> identical to those made by any modern web browser. No headers are spoofed, no authentication is bypassed, no rate-limiting mechanisms are circumvented, and no terms of service are inherently violated by the act of requesting a publicly accessible URL. Every request originates from the user's own browser and IP address. 🖥️<br><br>
+  ⚠️ <strong>User Responsibility:</strong> The end user assumes full responsibility for how this tool is used. It is the user's obligation to ensure that their use of this tool complies with all applicable laws, regulations, and terms of service of any website or platform they choose to interact with. The developers of this tool do not endorse, encourage, or condone the use of this software for any purpose that violates the terms of service of any third-party platform. 📋<br><br>
+  🔒 This tool does not collect, store, transmit, or process any user data. All URLs and configuration remain local to the user's browser session. No analytics, no cookies, no tracking. 🛡️<br><br>
+  🧪 <strong>Intended Use Cases:</strong> Frontend development hot-reload testing, API endpoint health monitoring, dashboard auto-refresh, staging environment QA, load simulation on your own infrastructure, and visiting webpages at your own preferred rate. 🔧<br><br>
+  📝 By using this tool, you acknowledge that you have read and understood this disclaimer and agree to use the software responsibly and in compliance with all applicable laws. 🤝<br><br>
+  <span style="color:#333">© 2026 Matty-San · SJB83 · MIT License · Built for development & testing purposes only ⚡</span>
+</div>
+
+<div class="frame-pool" id="framePool"></div>
+
+<script>
+(() => {
+  'use strict';
+
+  // ====== KAWAII ANIME GIRL SVG GENERATOR ======
+  function makeGirl(opts) {
+    const {hairColor, hairColor2, eyeStyle, outfitColor, outfitColor2, accessory, expression, sparkleColor} = opts;
+
+    // eye variations
+    let eyesL = '', eyesR = '';
+    if (eyeStyle === 'open') {
+      eyesL = `<ellipse cx="75" cy="108" rx="10" ry="14" fill="#1a1a2e"/>
+        <ellipse cx="78" cy="104" rx="4" ry="5" fill="#fff"/>
+        <ellipse cx="73" cy="110" rx="2" ry="2.5" fill="#fff" opacity="0.5"/>`;
+      eyesR = `<ellipse cx="125" cy="108" rx="10" ry="14" fill="#1a1a2e"/>
+        <ellipse cx="128" cy="104" rx="4" ry="5" fill="#fff"/>
+        <ellipse cx="123" cy="110" rx="2" ry="2.5" fill="#fff" opacity="0.5"/>`;
+    } else if (eyeStyle === 'closed') {
+      eyesL = `<path d="M62 108 Q75 98 88 108" stroke="#1a1a2e" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+      eyesR = `<path d="M112 108 Q125 98 138 108" stroke="#1a1a2e" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+    } else if (eyeStyle === 'wink') {
+      eyesL = `<ellipse cx="75" cy="108" rx="10" ry="14" fill="#1a1a2e"/>
+        <ellipse cx="78" cy="104" rx="4" ry="5" fill="#fff"/>`;
+      eyesR = `<path d="M112 110 Q125 100 138 110" stroke="#1a1a2e" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+    } else { // sparkle
+      eyesL = `<ellipse cx="75" cy="108" rx="11" ry="15" fill="#1a1a2e"/>
+        <ellipse cx="78" cy="103" rx="5" ry="6" fill="#fff"/>
+        <ellipse cx="70" cy="112" rx="3" ry="3" fill="#fff" opacity="0.6"/>
+        <circle cx="82" cy="108" r="1.5" fill="#fff" opacity="0.4"/>`;
+      eyesR = `<ellipse cx="125" cy="108" rx="11" ry="15" fill="#1a1a2e"/>
+        <ellipse cx="128" cy="103" rx="5" ry="6" fill="#fff"/>
+        <ellipse cx="120" cy="112" rx="3" ry="3" fill="#fff" opacity="0.6"/>
+        <circle cx="132" cy="108" r="1.5" fill="#fff" opacity="0.4"/>`;
+    }
+
+    // mouth
+    let mouth = '';
+    if (expression === 'smile') {
+      mouth = `<path d="M92 130 Q100 138 108 130" stroke="#d4727a" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+    } else if (expression === 'open') {
+      mouth = `<ellipse cx="100" cy="133" rx="7" ry="5" fill="#d4727a"/><ellipse cx="100" cy="131" rx="7" ry="3" fill="#fce4d6"/>`;
+    } else if (expression === 'cat') {
+      mouth = `<path d="M90 128 L100 134 L110 128" stroke="#d4727a" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+    } else { // pout
+      mouth = `<ellipse cx="100" cy="132" rx="5" ry="4" fill="#d4727a"/>`;
+    }
+
+    // accessory
+    let acc = '';
+    if (accessory === 'bow') {
+      acc = `<polygon points="85,58 100,48 100,58" fill="${sparkleColor}"/>
+        <polygon points="115,58 100,48 100,58" fill="${sparkleColor}"/>
+        <circle cx="100" cy="55" r="4" fill="${sparkleColor}"/>`;
+    } else if (accessory === 'catears') {
+      acc = `<polygon points="40,32 52,2 64,28" fill="${hairColor}"/>
+        <polygon points="136,28 148,2 160,32" fill="${hairColor}"/>
+        <polygon points="45,28 54,8 62,26" fill="#fce4d6" opacity="0.3"/>
+        <polygon points="138,26 146,8 155,28" fill="#fce4d6" opacity="0.3"/>`;
+    } else if (accessory === 'star') {
+      acc = `<text x="130" y="55" font-size="20" fill="${sparkleColor}">★</text>`;
+    } else if (accessory === 'hearts') {
+      acc = `<text x="55" y="50" font-size="14" fill="${sparkleColor}" opacity="0.8">♡</text>
+        <text x="135" y="55" font-size="10" fill="${sparkleColor}" opacity="0.6">♡</text>`;
+    }
+
+    // hand variations
+    const handR = Math.random() > 0.5
+      ? `<path d="M145 175 Q170 190 175 215" stroke="#fce4d6" stroke-width="14" fill="none" stroke-linecap="round"/>
+         <circle cx="175" cy="218" r="8" fill="#fce4d6"/>
+         <line x1="172" y1="210" x2="168" y2="196" stroke="#fce4d6" stroke-width="4" stroke-linecap="round"/>
+         <line x1="178" y1="210" x2="182" y2="196" stroke="#fce4d6" stroke-width="4" stroke-linecap="round"/>`
+      : `<path d="M145 175 Q168 185 172 210" stroke="#fce4d6" stroke-width="14" fill="none" stroke-linecap="round"/>
+         <circle cx="174" cy="213" r="8" fill="#fce4d6"/>`;
+
+    return `<svg viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg">
+      <!-- hair back -->
+      <ellipse cx="100" cy="100" rx="70" ry="75" fill="${hairColor}"/>
+      <rect x="30" y="90" width="140" height="140" rx="10" fill="${hairColor}"/>
+      <!-- face -->
+      <ellipse cx="100" cy="105" rx="55" ry="58" fill="#fce4d6"/>
+      <!-- blush -->
+      <ellipse cx="65" cy="122" rx="12" ry="7" fill="#f9a8c9" opacity="0.5"/>
+      <ellipse cx="135" cy="122" rx="12" ry="7" fill="#f9a8c9" opacity="0.5"/>
+      <!-- eyes -->
+      ${eyesL}${eyesR}
+      <!-- mouth -->
+      ${mouth}
+      <!-- hair bangs -->
+      <path d="M30 85 Q50 40 100 45 Q150 40 170 85 L160 95 Q140 60 100 58 Q60 60 40 95 Z" fill="${hairColor}"/>
+      <path d="M55 80 Q65 55 80 70 L70 90 Z" fill="${hairColor2}"/>
+      <path d="M120 70 Q135 55 145 80 L135 90 Z" fill="${hairColor2}"/>
+      <!-- accessory -->
+      ${acc}
+      <!-- hair sides -->
+      <rect x="28" y="95" width="18" height="90" rx="9" fill="${hairColor}"/>
+      <rect x="154" y="95" width="18" height="90" rx="9" fill="${hairColor}"/>
+      <!-- body -->
+      <path d="M60 155 Q55 170 50 200 Q48 220 60 240 L140 240 Q152 220 150 200 Q145 170 140 155 Z" fill="${outfitColor}"/>
+      <!-- collar -->
+      <path d="M70 158 L100 178 L130 158" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <!-- arms -->
+      <path d="M55 175 Q30 190 25 215" stroke="#fce4d6" stroke-width="14" fill="none" stroke-linecap="round"/>
+      ${handR}
+      <!-- skirt -->
+      <path d="M55 235 Q45 260 40 275 L160 275 Q155 260 145 235 Z" fill="${outfitColor2}"/>
+      <!-- legs -->
+      <line x1="80" y1="270" x2="78" y2="278" stroke="#fce4d6" stroke-width="10" stroke-linecap="round"/>
+      <line x1="120" y1="270" x2="122" y2="278" stroke="#fce4d6" stroke-width="10" stroke-linecap="round"/>
+      <!-- sparkles -->
+      <text x="${10+Math.random()*20}" y="${50+Math.random()*20}" font-size="${12+Math.random()*8}" fill="${sparkleColor}" opacity="0.7">✧</text>
+      <text x="${160+Math.random()*25}" y="${40+Math.random()*30}" font-size="${10+Math.random()*6}" fill="${sparkleColor}" opacity="0.6">✦</text>
+      <text x="${170+Math.random()*15}" y="${160+Math.random()*20}" font-size="${8+Math.random()*8}" fill="${sparkleColor}" opacity="0.5">♡</text>
+    </svg>`;
+  }
+
+  function makeChibi(opts) {
+    const {hairColor, outfitColor, sparkleColor, eyeStyle, accessory} = opts;
+
+    let eyes = '';
+    if (eyeStyle === 'open') {
+      eyes = `<ellipse cx="45" cy="50" rx="6" ry="9" fill="#1a1a2e"/>
+        <ellipse cx="75" cy="50" rx="6" ry="9" fill="#1a1a2e"/>
+        <ellipse cx="47" cy="47" rx="3" ry="3" fill="#fff"/>
+        <ellipse cx="77" cy="47" rx="3" ry="3" fill="#fff"/>`;
+    } else {
+      eyes = `<path d="M38 50 Q45 43 52 50" stroke="#1a1a2e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M68 50 Q75 43 82 50" stroke="#1a1a2e" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+    }
+
+    let acc = '';
+    if (accessory === 'catears') {
+      acc = `<polygon points="30,25 38,0 48,22" fill="${hairColor}"/>
+        <polygon points="72,22 82,0 90,25" fill="${hairColor}"/>
+        <polygon points="34,22 40,6 46,20" fill="#fce4d6" opacity="0.3"/>
+        <polygon points="74,20 80,6 86,22" fill="#fce4d6" opacity="0.3"/>`;
+    } else if (accessory === 'bow') {
+      acc = `<polygon points="48,18 60,10 60,18" fill="${sparkleColor}"/>
+        <polygon points="72,18 60,10 60,18" fill="${sparkleColor}"/>
+        <circle cx="60" cy="16" r="3" fill="${sparkleColor}"/>`;
+    }
+
+    return `<svg viewBox="0 0 120 155" xmlns="http://www.w3.org/2000/svg">
+      ${acc}
+      <circle cx="60" cy="50" r="38" fill="${hairColor}"/>
+      <circle cx="60" cy="52" r="30" fill="#fce4d6"/>
+      ${eyes}
+      <path d="M52 65 Q60 72 68 65" stroke="#d4727a" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <ellipse cx="38" cy="60" rx="8" ry="5" fill="#f9a8c9" opacity="0.4"/>
+      <ellipse cx="82" cy="60" rx="8" ry="5" fill="#f9a8c9" opacity="0.4"/>
+      <path d="M22 42 Q40 10 60 15 Q80 10 98 42 L90 50 Q78 25 60 28 Q42 25 30 50 Z" fill="${hairColor}"/>
+      <rect x="40" y="82" width="40" height="35" rx="8" fill="${outfitColor}"/>
+      <path d="M55 82 L60 95 L65 82" stroke="#fff" stroke-width="1.5" fill="none"/>
+      <line x1="50" y1="115" x2="48" y2="140" stroke="#fce4d6" stroke-width="8" stroke-linecap="round"/>
+      <line x1="70" y1="115" x2="72" y2="140" stroke="#fce4d6" stroke-width="8" stroke-linecap="round"/>
+      <text x="5" y="30" font-size="10" fill="${sparkleColor}" opacity="0.6">♡</text>
+      <text x="100" y="85" font-size="8" fill="${sparkleColor}" opacity="0.5">✧</text>
+    </svg>`;
+  }
+
+  // ====== SPAWN 15 GIRLS ======
+  function spawnAnimeGirls() {
+    const layer = document.getElementById('animeLayer');
+    const hairColors = ['#2d1b4e','#1a3a5c','#4a2060','#5c1a3a','#1a4a3a','#3a1a5c','#5c3a1a','#2a2a4a','#4a1a2a','#1a2a4a','#3a4a1a','#1a5c4a','#5c1a5c','#2a4a3a','#4a3a2a'];
+    const outfitColors = ['#f472b6','#5b7ff7','#22c55e','#a855f7','#f59e0b','#ec4899','#6366f1','#14b8a6','#f43f5e','#8b5cf6','#06b6d4','#e879f9','#3b82f6','#10b981','#f97316'];
+    const sparkleColors = ['#f472b6','#5b7ff7','#22c55e','#a855f7','#fbbf24','#ec4899','#06b6d4'];
+    const eyeStyles = ['open','closed','wink','sparkle'];
+    const expressions = ['smile','open','cat','pout'];
+    const accessories = ['bow','catears','star','hearts','none'];
+
+    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+    const placements = [
+      // big girls - corners and edges
+      { x: -2, y: 58, w: 180, opacity: 0.35 },
+      { x: 82, y: 55, w: 190, opacity: 0.35 },
+      { x: 8, y: 70, w: 140, opacity: 0.25 },
+      { x: 90, y: 72, w: 130, opacity: 0.22 },
+      { x: 45, y: 75, w: 100, opacity: 0.15 },
+      // medium girls - scattered
+      { x: -3, y: 20, w: 110, opacity: 0.18 },
+      { x: 92, y: 15, w: 100, opacity: 0.16 },
+      { x: 20, y: 45, w: 90, opacity: 0.13 },
+      { x: 75, y: 40, w: 95, opacity: 0.14 },
+      { x: 50, y: 10, w: 80, opacity: 0.10 },
+    ];
+
+    // 10 full girls
+    placements.forEach((p, i) => {
+      const hc = hairColors[i];
+      const hc2 = hairColors[(i + 5) % hairColors.length];
+      const oc = outfitColors[i];
+      const oc2 = outfitColors[(i + 3) % outfitColors.length];
+
+      const html = makeGirl({
+        hairColor: hc, hairColor2: hc2,
+        outfitColor: oc, outfitColor2: oc2,
+        eyeStyle: pick(eyeStyles),
+        expression: pick(expressions),
+        accessory: pick(accessories),
+        sparkleColor: pick(sparkleColors),
+      });
+
+      const div = document.createElement('div');
+      div.className = 'anime-girl';
+      div.innerHTML = html;
+      div.style.cssText = `
+        left: ${p.x}%;
+        top: ${p.y}%;
+        width: ${p.w}px;
+        opacity: ${p.opacity};
+        filter: drop-shadow(0 0 15px ${pick(sparkleColors)}40);
+        transform: ${Math.random() > 0.5 ? 'scaleX(-1)' : ''};
+      `;
+      layer.appendChild(div);
+    });
+
+    // 5 chibis
+    const chibiPlacements = [
+      { x: 35, y: 82, w: 70, opacity: 0.30 },
+      { x: 60, y: 60, w: 65, opacity: 0.18 },
+      { x: 15, y: 5, w: 55, opacity: 0.14 },
+      { x: 80, y: 3, w: 60, opacity: 0.12 },
+      { x: 50, y: 50, w: 50, opacity: 0.10 },
+    ];
+
+    chibiPlacements.forEach((p, i) => {
+      const html = makeChibi({
+        hairColor: hairColors[i + 10],
+        outfitColor: outfitColors[i + 10],
+        sparkleColor: pick(sparkleColors),
+        eyeStyle: Math.random() > 0.5 ? 'open' : 'closed',
+        accessory: Math.random() > 0.5 ? 'catears' : 'bow',
+      });
+
+      const div = document.createElement('div');
+      div.className = 'anime-girl';
+      div.innerHTML = html;
+      div.style.cssText = `
+        left: ${p.x}%;
+        top: ${p.y}%;
+        width: ${p.w}px;
+        opacity: ${p.opacity};
+        filter: drop-shadow(0 0 12px ${pick(sparkleColors)}30);
+        transform: ${Math.random() > 0.5 ? 'scaleX(-1)' : ''};
+      `;
+      layer.appendChild(div);
+    });
+  }
+
+  spawnAnimeGirls();
+
+  // ====== SJB83 CHAOS (grey/white only) ======
+  const sjbFonts = [
+    "'Bangers', cursive",
+    "'Permanent Marker', cursive",
+    "'Press Start 2P', monospace",
+    "'Rubik Mono One', monospace",
+    "'Silkscreen', monospace",
+    "'JetBrains Mono', monospace",
+    "serif",
+    "Impact, sans-serif",
+  ];
+
+  const sjbTexts = ['SJB83','SJB83','SJB83','sjb83','S J B 8 3','SJB·83','§JB83','SJB⚡83'];
+  const sjbColors = [
+    'rgba(255,255,255,0.04)',
+    'rgba(255,255,255,0.06)',
+    'rgba(255,255,255,0.08)',
+    'rgba(255,255,255,0.03)',
+    'rgba(200,200,200,0.05)',
+    'rgba(200,200,200,0.07)',
+    'rgba(170,170,170,0.04)',
+    'rgba(170,170,170,0.06)',
+    'rgba(140,140,140,0.05)',
+    'rgba(220,220,220,0.03)',
+  ];
+
+  function spawnSJB() {
+    const layer = document.getElementById('sjbLayer');
+    const count = 35 + Math.floor(Math.random() * 15);
+
+    for (let i = 0; i < count; i++) {
+      const el = document.createElement('div');
+      el.className = 'sjb';
+      el.textContent = sjbTexts[Math.floor(Math.random() * sjbTexts.length)];
+
+      const font = sjbFonts[Math.floor(Math.random() * sjbFonts.length)];
+      const size = 10 + Math.random() * 50;
+      const x = Math.random() * 100;
+      const y = Math.random() * 100;
+      const rot = -45 + Math.random() * 90;
+      const color = sjbColors[Math.floor(Math.random() * sjbColors.length)];
+
+      el.style.cssText = `
+        font-family: ${font};
+        font-size: ${size}px;
+        left: ${x}%;
+        top: ${y}%;
+        --r: ${rot}deg;
+        transform: rotate(${rot}deg);
+        color: ${color};
+        animation-duration: ${15 + Math.random() * 20}s;
+        animation-delay: ${-Math.random() * 20}s;
+      `;
+
+      if (Math.random() < 0.1) {
+        el.style.fontSize = (80 + Math.random() * 70) + 'px';
+        el.style.color = 'rgba(255,255,255,0.025)';
+        el.style.fontWeight = '900';
+      }
+
+      if (Math.random() < 0.05) {
+        el.style.fontSize = (120 + Math.random() * 40) + 'px';
+        el.style.color = 'rgba(255,255,255,0.015)';
+        el.style.letterSpacing = '0.3em';
+      }
+
+      layer.appendChild(el);
+    }
+  }
+
+  spawnSJB();
+
+  // ====== POPUP ======
+  const $popup = document.getElementById('popup');
+  function showPopup() { $popup.classList.add('show'); }
+  window.closePopup = function() { $popup.classList.remove('show'); };
+
+  // ====== STATE ======
+  const state = { entries: [], globalPaused: false, idCounter: 0 };
+
+  const $input     = document.getElementById('urlInput');
+  const $list      = document.getElementById('urlList');
+  const $empty     = document.getElementById('emptyState');
+  const $pool      = document.getElementById('framePool');
+  const $pauseBtn  = document.getElementById('pauseBtn');
+  const $dot       = document.getElementById('globalDot');
+  const $gStatus   = document.getElementById('globalStatus');
+  const $count     = document.getElementById('countLabel');
+  const $bulkArea  = document.getElementById('bulkArea');
+  const $bulkInput = document.getElementById('bulkInput');
+
+  $input.addEventListener('keydown', e => { if (e.key === 'Enter') addUrl(); });
+
+  function norm(u) {
+    u = u.trim();
+    if (!u) return '';
+    if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
+    return u;
+  }
+
+  function fmtInterval(v) { return v < 1 ? v.toFixed(1) + 's' : v.toFixed(0) + 's'; }
+  function fmtTime(d) { if (!d) return '\u2014'; return d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'}); }
+
+  window.addUrl = function() {
+    const url = norm($input.value);
+    if (!url) return;
+    if (state.entries.length >= 100) return;
+    if (state.entries.some(e => e.url === url)) return;
+    pushEntry(url);
+    $input.value = '';
+    $input.focus();
+    showPopup();
+    setTimeout(() => { $popup.classList.remove('show'); }, 2200);
+  };
+
+  function pushEntry(url, interval = 15) {
+    state.entries.push({
+      id: ++state.idCounter, url, interval,
+      lastRefresh: null,
+      nextRefresh: Date.now() + interval * 1000,
+    });
+    render();
+  }
+
+  window.removeEntry = function(id) {
+    const idx = state.entries.findIndex(e => e.id === id);
+    if (idx > -1) {
+      const e = state.entries[idx];
+      const frame = document.getElementById('f-' + e.id);
+      if (frame) frame.remove();
+      state.entries.splice(idx, 1);
+      render();
+    }
+  };
+
+  window.clearAll = function() {
+    state.entries = [];
+    $pool.innerHTML = '';
+    render();
+  };
+
+  window.togglePause = function() {
+    state.globalPaused = !state.globalPaused;
+    $pauseBtn.textContent = state.globalPaused ? 'Resume All' : 'Pause All';
+    $dot.className = state.globalPaused ? 'dot off' : 'dot';
+    $gStatus.textContent = state.globalPaused ? 'paused' : 'running';
+    if (!state.globalPaused) {
+      const now = Date.now();
+      state.entries.forEach(e => { e.nextRefresh = now + e.interval * 1000; });
+    }
+  };
+
+  window.toggleBulk = function() {
+    $bulkArea.classList.toggle('open');
+    if ($bulkArea.classList.contains('open')) $bulkInput.focus();
+  };
+
+  window.bulkAdd = function() {
+    const lines = $bulkInput.value.split('\n');
+    let added = 0;
+    for (const line of lines) {
+      if (state.entries.length >= 100) break;
+      const url = norm(line);
+      if (!url) continue;
+      if (state.entries.some(e => e.url === url)) continue;
+      pushEntry(url);
+      added++;
+    }
+    $bulkInput.value = '';
+    $bulkArea.classList.remove('open');
+    render();
+    if (added > 0) { showPopup(); setTimeout(() => { $popup.classList.remove('show'); }, 2200); }
+  };
+
+  window.onSlider = function(id, val) {
+    const entry = state.entries.find(e => e.id === id);
+    if (!entry) return;
+    const v = parseFloat(val);
+    entry.interval = v;
+    entry.nextRefresh = Date.now() + v * 1000;
+    const label = document.getElementById('rl-' + id);
+    if (label) label.textContent = fmtInterval(v);
+  };
+
+  function refreshEntry(entry) {
+    const fid = 'f-' + entry.id;
+    let frame = document.getElementById(fid);
+    if (frame) frame.remove();
+    frame = document.createElement('iframe');
+    frame.id = fid;
+    frame.src = entry.url;
+    $pool.appendChild(frame);
+    entry.lastRefresh = new Date();
+    entry.nextRefresh = Date.now() + entry.interval * 1000;
+    const row = document.getElementById('row-' + entry.id);
+    if (row) {
+      row.classList.remove('flash');
+      void row.offsetWidth;
+      row.classList.add('flash');
+      const ts = row.querySelector('.ts');
+      if (ts) ts.textContent = fmtTime(entry.lastRefresh);
+    }
+  }
+
+  function tick() {
+    if (!state.globalPaused) {
+      const now = Date.now();
+      for (const entry of state.entries) {
+        if (now >= entry.nextRefresh) refreshEntry(entry);
+        const cd = document.getElementById('cd-' + entry.id);
+        if (cd) {
+          const rem = Math.max(0, (entry.nextRefresh - now) / 1000);
+          cd.textContent = rem < 1 ? rem.toFixed(1) : rem.toFixed(0);
+        }
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+  function render() {
+    $count.textContent = state.entries.length + ' / 100';
+    $empty.style.display = state.entries.length ? 'none' : 'block';
+    $list.innerHTML = state.entries.map((e, i) => {
+      const sv = intervalToSlider(e.interval);
+      return `<div class="url-item" id="row-${e.id}">
+        <span class="idx">${String(i+1).padStart(2,'0')}</span>
+        <span class="url-text" title="${e.url}">${e.url}</span>
+        <div class="slider-wrap">
+          <input type="range" min="0" max="100" step="1" value="${sv}" oninput="onSlider(${e.id},sliderToInterval(this.value))"/>
+          <span class="rate-label" id="rl-${e.id}">${fmtInterval(e.interval)}</span>
+        </div>
+        <span class="cd" id="cd-${e.id}">\u2014</span>
+        <span class="ts">${fmtTime(e.lastRefresh)}</span>
+        <button class="remove-btn" onclick="removeEntry(${e.id})">✕</button>
+      </div>`;
+    }).join('');
+  }
+
+  const MIN_INT = 0.1, MAX_INT = 15;
+  const LOG_MIN = Math.log(MIN_INT), LOG_MAX = Math.log(MAX_INT);
+
+  window.sliderToInterval = function(sv) {
+    const t = sv / 100;
+    const v = Math.exp(LOG_MIN + t * (LOG_MAX - LOG_MIN));
+    if (v < 1) return Math.round(v * 10) / 10;
+    return Math.round(v * 2) / 2;
+  };
+
+  function intervalToSlider(interval) {
+    return Math.round((Math.log(interval) - LOG_MIN) / (LOG_MAX - LOG_MIN) * 100);
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>
